@@ -61,6 +61,7 @@ def index():
     time_left = get_time_left()
     return render_template('index.html', checklist=checklist, streaks=streaks, time_left=time_left, vapid_public_key=VAPID_PUBLIC_KEY)
 
+
 @app.route('/update', methods=['POST'])
 @requires_auth
 def update_checklist():
