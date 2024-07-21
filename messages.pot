@@ -1,0 +1,43 @@
+# Translations template for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-07-21 18:40+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+#: app.py:106
+msgid "The owner has been notified."
+msgstr ""
+
+#: app.py:108
+msgid "Failed to send notification: "
+msgstr ""
+
+#: app.py:110
+msgid "Item not found"
+msgstr ""
+
+#: app.py:121 app.py:178
+msgid "Invalid credentials"
+msgstr ""
+
+#: app.py:145 app.py:209
+msgid "Item added successfully"
+msgstr ""
+
+#: app.py:165
+msgid "Registration successful"
+msgstr ""
+

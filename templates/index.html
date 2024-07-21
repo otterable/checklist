@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <title>Daily Checklist</title>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 class="mt-5">Daily Checklist for <span id="currentDate"></span></h1>
+  <p>Time left to fill out the checklist: <span id="timeLeft">{{ time_left }}</span></p>
+  <form method="post" action="{{ url_for('update_checklist') }}">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="moral" id="moral" {% if checklist.moral %}checked{% endif %}>
+      <label class="form-check-label" for="moral">
+        Have I been moral? ({{ streaks.moral }} day streak, Glückwunsch!)
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="dedicated_time" id="dedicated_time" {% if checklist.dedicated_time %}checked{% endif %}>
+      <label class="form-check-label" for="dedicated_time">
+        Have I dedicated enough time to my boyfriend? ({{ streaks.dedicated_time }} day streak, Glückwunsch!)
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="helped" id="helped" {% if checklist.helped %}checked{% endif %}>
+      <label class="form-check-label" for="helped">
+        Have I helped my boyfriend/done housework? ({{ streaks.helped }} day streak, Glückwunsch!)
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="said_love" id="said_love" {% if checklist.said_love %}checked{% endif %}>
+      <label class="form-check-label" for="said_love">
+        Have I said I love him? ({{ streaks.said_love }} day streak, Glückwunsch!)
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="fun" id="fun" {% if checklist.fun %}checked{% endif %}>
+      <label class="form-check-label" for="fun">
+        Have I let him have fun with me? ({{ streaks.fun }} day streak, Glückwunsch!)
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+  </form>
+  <a href="{{ url_for('history') }}" class="btn btn-link mt-3">View History</a>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  function updateTime() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const timeString = now.toLocaleTimeString('en-GB', { hour12: false });
+    const dateString = now.toLocaleDateString('en-GB', options);
+    document.getElementById('currentDate').innerText = `${dateString} ${timeString}`;
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  function updateTimeLeft() {
+    const now = new Date();
+    const resetTime = new Date(now);
+    resetTime.setHours(4, 0, 0, 0);
+    if (now.getHours() >= 4) {
+      resetTime.setDate(resetTime.getDate() + 1);
+    }
+    const timeLeft = resetTime - now;
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    document.getElementById('timeLeft').innerText = `${hours}:${minutes}:${seconds}`;
+  }
+  setInterval(updateTimeLeft, 1000);
+  updateTimeLeft();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/service-worker.js').then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      return registration.pushManager.getSubscription().then(function(subscription) {
+        if (subscription) {
+          return subscription;
+        }
+        return registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array("BB_2p_DrLkdo8M4lwm_lvafxlIb-luYjCCJ8kNmedRV9GsIfieIfXbo67o3gPYQgsLbYjPcrB0eT9ufGa5t6Eyk")
+        });
+      });
+    }).then(function(subscription) {
+      fetch('/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(subscription)
+      });
+    }).catch(function(error) {
+      console.log('ServiceWorker registration failed: ', error);
+    });
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+</script>
+</body>
+</html>
